@@ -1,0 +1,26 @@
+.article {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap-reverse;
+}
+.phone {
+  background-image: url("https://instagram.com/static/images/homepage/home-phones.png/43cc71bb1b43.png");
+  background-repeat: no-repeat;
+  height: 700px;
+  width: 500px;
+  transition:all 0 0.5s;
+}
+.form {
+  width: 500px;
+}
+.images {
+  position: relative;
+}
+.single-pic {
+  position: absolute;
+  height: 435px;
+  left: 147px;
+  width: 247px;
+  top: 96px;
+}
