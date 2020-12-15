@@ -35,7 +35,11 @@ const Auth = () => {
     },
   });
 
-  const { register, errors, clearErrors, handleSubmit } = useForm();
+  const { register, errors, clearErrors, handleSubmit, getValues } = useForm();
+
+  useEffect(() => {
+    console.log(errors);
+  }, [errors]);
 
   const [isSignup, setIsSignup] = useState(false);
   const [isChanged, setChanged] = useState(false);
@@ -96,6 +100,11 @@ const Auth = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const switchMode = () => {
+    setIsSignup((prevState) => !prevState);
+    clearErrors();
+  };
+
   return (
     <main style={{ padding: "20px" }}>
       <article className="article">
@@ -116,7 +125,12 @@ const Auth = () => {
             )}
           </div>
         </div>
-        <form onSubmit={handleSubmit(formSubmit)} className="form" noValidate>
+        <form
+          onSubmit={handleSubmit(formSubmit)}
+          className="form"
+          noValidate
+          autoComplete="off"
+        >
           <Card className={classes.root}>
             <CardActionArea disableRipple className={classes.cardAction}>
               <CardMedia
@@ -130,11 +144,11 @@ const Auth = () => {
                   flexDirection: "column",
                 }}
               >
-                {/* {errors && errors.general && (
-                  <caption style={{ color: "#ff0000", textAlign: "center" }}>
-                    {errors && errors.general}
-                  </caption>
-                )} */}
+                {error && error.general && (
+                  <Typography variant="button" color="secondary" align="center">
+                    {error && error.general}
+                  </Typography>
+                )}
                 {isSignup ? (
                   <>
                     <TextField
@@ -142,11 +156,46 @@ const Auth = () => {
                       onChange={handleInput}
                       fullWidth
                       margin="normal"
-                      id="outlined-basic"
                       label="Email"
+                      error={
+                        errors.email || error.email || error.general
+                          ? true
+                          : false
+                      }
+                      inputRef={register({
+                        required: true,
+                        pattern: /^([0-9a-zA-Z]([-.w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-w]*[0-9a-zA-Z].)+[a-zA-Z]{2,9})$/,
+                      })}
                       name="email"
                       variant="outlined"
                     />
+                    {error && error.email ? (
+                      <Typography
+                        variant="caption"
+                        align="center"
+                        color="secondary"
+                      >
+                        {error.email}
+                      </Typography>
+                    ) : null}
+                    {errors?.email?.type === "required" ? (
+                      <Typography
+                        variant="caption"
+                        align="center"
+                        color="secondary"
+                      >
+                        Required
+                      </Typography>
+                    ) : null}
+                    {errors?.email?.type === "pattern" ? (
+                      <Typography
+                        variant="caption"
+                        align="center"
+                        color="secondary"
+                      >
+                        Invalid email
+                      </Typography>
+                    ) : null}
                     <TextField
                       required
                       onChange={handleInput}
@@ -155,8 +204,32 @@ const Auth = () => {
                       id="outlined-basic"
                       label="Username"
                       name="username"
+                      error={
+                        errors.username || error.username || error.general
+                          ? true
+                          : false
+                      }
+                      inputRef={register({ required: true })}
                       variant="outlined"
                     />
+                    {error && error.username ? (
+                      <Typography
+                        variant="caption"
+                        align="center"
+                        color="secondary"
+                      >
+                        {error.username}
+                      </Typography>
+                    ) : null}
+                    {errors && errors.username ? (
+                      <Typography
+                        variant="caption"
+                        align="center"
+                        color="secondary"
+                      >
+                        Required
+                      </Typography>
+                    ) : null}
                     <FormControl variant="outlined">
                       <InputLabel htmlFor="outlined-adornment-password">
                         Password
@@ -165,11 +238,16 @@ const Auth = () => {
                         required
                         onChange={handleInput}
                         fullWidth
-                        margin="normal"
                         id="outlined-basic"
                         label="Password"
+                        error={
+                          errors.password || error.password || error.general
+                            ? true
+                            : false
+                        }
                         name="password"
                         type={isShowPass ? "text" : "password"}
+                        inputRef={register({ required: true, minLength: 6 })}
                         variant="outlined"
                         endAdornment={
                           <InputAdornment position="end">
@@ -188,17 +266,85 @@ const Auth = () => {
                           </InputAdornment>
                         }
                       />
+                      {error && error.password ? (
+                        <Typography
+                          variant="caption"
+                          align="center"
+                          color="secondary"
+                        >
+                          {error.password}
+                        </Typography>
+                      ) : null}
+                      {errors?.password?.type === "required" ? (
+                        <Typography
+                          variant="caption"
+                          align="center"
+                          color="secondary"
+                        >
+                          Required
+                        </Typography>
+                      ) : null}
+                      {errors?.password?.type === "minLength" ? (
+                        <Typography
+                          variant="caption"
+                          align="center"
+                          color="secondary"
+                        >
+                          Must be atleast 6 characters
+                        </Typography>
+                      ) : null}
                     </FormControl>
                     <TextField
                       required
                       onChange={handleInput}
                       fullWidth
                       margin="normal"
+                      type="password"
+                      error={
+                        errors.confirmPassword ||
+                        error.confirmPassword ||
+                        error.general
+                          ? true
+                          : false
+                      }
                       id="outlined-basic"
+                      inputRef={register({
+                        required: true,
+                        validate: () =>
+                          getValues("password") ===
+                          getValues("confirmPassword"),
+                      })}
                       label="Confirm Password"
                       name="confirmPassword"
                       variant="outlined"
                     />
+                    {error && error.confirmPassword ? (
+                      <Typography
+                        variant="caption"
+                        align="center"
+                        color="secondary"
+                      >
+                        {error.confirmPassword}
+                      </Typography>
+                    ) : null}
+                    {errors?.confirmPassword?.type === "required" ? (
+                      <Typography
+                        variant="caption"
+                        align="center"
+                        color="secondary"
+                      >
+                        Required
+                      </Typography>
+                    ) : null}
+                    {errors?.confirmPassword?.type === "validate" ? (
+                      <Typography
+                        variant="caption"
+                        align="center"
+                        color="secondary"
+                      >
+                        Passwords do not match
+                      </Typography>
+                    ) : null}
                   </>
                 ) : (
                   <>
@@ -211,32 +357,44 @@ const Auth = () => {
                       label="Username or Email"
                       name="name"
                       variant="outlined"
-                      autoComplete="false"
+                      autoComplete="off"
                       inputRef={register({ required: true })}
-                      error={errors.name ? true : false}
+                      error={
+                        errors.name || error.name || error.general
+                          ? true
+                          : false
+                      }
                     />
+
+                    {error && error.username ? (
+                      <Typography
+                        variant="caption"
+                        align="center"
+                        color="secondary"
+                      >
+                        {error.username}
+                      </Typography>
+                    ) : null}
                     {errors && errors.name ? (
-                      <p
-                        style={{
-                          color: "#ff0000",
-                          padding: "5px",
-                          textAlign: "center",
-                        }}
+                      <Typography
+                        variant="caption"
+                        align="center"
+                        color="secondary"
                       >
                         Required
-                      </p>
+                      </Typography>
                     ) : null}
                     <FormControl variant="outlined">
-                      <InputLabel htmlFor="outlined-adornment-password">
+                      <InputLabel
+                        required={true}
+                        htmlFor="outlined-adornment-password"
+                      >
                         Password
                       </InputLabel>
                       <OutlinedInput
-                        required
                         onChange={handleInput}
                         fullWidth
-                        autoComplete="false"
-                        margin="normal"
-                        id="outlined-basic"
+                        autoComplete="off"
                         label="Password"
                         name="password"
                         inputRef={register({ required: true, minLength: 6 })}
@@ -258,18 +416,20 @@ const Auth = () => {
                             </IconButton>
                           </InputAdornment>
                         }
-                        error={errors.password ? true : false}
+                        error={
+                          errors.password || error.password || error.general
+                            ? true
+                            : false
+                        }
                       />
                       {errors.password ? (
-                        <p
-                          style={{
-                            color: "#ff0000",
-                            textAlign: "center",
-                            padding: "5px",
-                          }}
+                        <Typography
+                          variant="caption"
+                          align="center"
+                          color="secondary"
                         >
                           Required and must be atleast 6 characters
-                        </p>
+                        </Typography>
                       ) : null}
                     </FormControl>
                   </>
@@ -304,10 +464,7 @@ const Auth = () => {
                     ? "Already have an account?"
                     : "Dont have an account?"}
 
-                  <strong
-                    onClick={() => setIsSignup((prevState) => !prevState)}
-                    style={{ color: "#0000ff" }}
-                  >
+                  <strong onClick={switchMode} style={{ color: "#0000ff" }}>
                     {isSignup ? "Signin" : "Signup"}
                   </strong>
                 </Typography>
