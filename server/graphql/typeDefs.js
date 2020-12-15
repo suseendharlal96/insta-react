@@ -8,7 +8,7 @@ const typeDefs = gql`
   }
 
   type Query {
-    signin(username: String!, password: String!): User
+    signin(name: String!, password: String!): User
   }
 
   type Mutation {

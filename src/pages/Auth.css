@@ -9,7 +9,9 @@
   background-repeat: no-repeat;
   height: 700px;
   width: 500px;
-  transition:all 0 0.5s;
+}
+img {
+  transition: all 0.5s ease-in;
 }
 .form {
   width: 500px;
@@ -23,4 +25,10 @@
   left: 147px;
   width: 247px;
   top: 96px;
+}
+
+.error-text {
+  color:'#ff0000';
+  padding:'5px';
+  text-align: center;
 }

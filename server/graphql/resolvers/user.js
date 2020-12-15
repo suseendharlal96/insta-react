@@ -70,20 +70,31 @@ const validate = {
 
 module.exports = {
   Query: {
-    signin: async (_, { username, password }) => {
-      validate.signin(username, password);
+    signin: async (_, { name, password }) => {
+      validate.signin(name, password);
       try {
-        const user = await User.findOne({ username });
+        const user = await User.findOne({
+          $or: [{ username: name }, { email: name }],
+        });
+        console.log(user);
         if (!user) {
-          throw new AuthenticationError("Invalid credentials");
+          throw new UserInputError("Invalid credentials", {
+            errors: {
+              general: "Invalid credentials",
+            },
+          });
         }
         const isPass = await bcrypt.compare(password, user.password);
         if (!isPass) {
-          throw new AuthenticationError("Invalid credentials");
+          throw new UserInputError("Invalid credentials", {
+            errors: {
+              general: "Invalid credentials",
+            },
+          });
         }
         const token = jwt.sign(
           {
-            username,
+            name,
             password,
           },
           "secretkey",
