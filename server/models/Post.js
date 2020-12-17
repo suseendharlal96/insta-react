@@ -14,7 +14,7 @@ const postSchema = new Schema({
     default: [],
   },
   comments: {
-    type: [String],
+    type: [],
     default: [],
   },
   title: {

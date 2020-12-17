@@ -1,14 +1,27 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import ApolloProvider from './ApolloProvider';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import { createStore, applyMiddleware, combineReducers } from "redux";
+import { Provider } from "react-redux";
+import thunk from "redux-thunk";
+
+import "./index.css";
+import ApolloProvider from "./ApolloProvider";
+import reportWebVitals from "./reportWebVitals";
+import authReducer from "./store/reducers/auth";
+
+const rootReducer = combineReducers({
+  authReducer,
+});
+
+const store = createStore(rootReducer, applyMiddleware(thunk));
 
 ReactDOM.render(
   <React.StrictMode>
-    <ApolloProvider />
+    <Provider store={store}>
+      <ApolloProvider />
+    </Provider>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

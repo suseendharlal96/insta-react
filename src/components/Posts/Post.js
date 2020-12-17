@@ -4,7 +4,7 @@ import "./Post.css";
 
 const Post = () => {
   return (
-    <div>
+    <div className="post">
       <header className="post-header">
         <Avatar className="post-avatar" alt="Susee" src="/static/images" />
         <h3>Username</h3>

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { useLazyQuery, useMutation, gql } from "@apollo/client";
 import {
   Card,
@@ -20,6 +22,7 @@ import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { useForm } from "react-hook-form";
 
+import { authSuccess } from "../store/actions/auth";
 import "./Auth.css";
 
 const Auth = () => {
@@ -36,6 +39,8 @@ const Auth = () => {
   });
 
   const { register, errors, clearErrors, handleSubmit, getValues } = useForm();
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     console.log(errors);
@@ -73,8 +78,22 @@ const Auth = () => {
   const [login, { loading }] = useLazyQuery(SIGNIN, {
     onCompleted(data) {
       console.log(data);
+      dispatch(authSuccess(data.signin));
+      history.push("/");
     },
     onError(err) {
+      setError(err.graphQLErrors[0].extensions.errors);
+    },
+  });
+
+  const [signup, { signuploading }] = useMutation(SIGNUP, {
+    onCompleted(data) {
+      console.log(data);
+      dispatch(authSuccess(data.signup));
+      history.push("/");
+    },
+    onError(err) {
+      console.log(err.graphQLErrors[0]);
       setError(err.graphQLErrors[0].extensions.errors);
     },
   });
@@ -92,7 +111,7 @@ const Auth = () => {
     if (!isSignup) {
       login({ variables: form });
     } else {
-      return;
+      signup({ variables: form });
     }
   };
 
@@ -101,6 +120,14 @@ const Auth = () => {
   };
 
   const switchMode = () => {
+    setForm({
+      ...form,
+      email: "",
+      password: "",
+      username: "",
+      confirmPassword: "",
+      name: "",
+    });
     setIsSignup((prevState) => !prevState);
     clearErrors();
   };
@@ -152,6 +179,8 @@ const Auth = () => {
                 {isSignup ? (
                   <>
                     <TextField
+                      autoComplete="new-password"
+                      type="email"
                       required
                       onChange={handleInput}
                       fullWidth
@@ -201,7 +230,6 @@ const Auth = () => {
                       onChange={handleInput}
                       fullWidth
                       margin="normal"
-                      id="outlined-basic"
                       label="Username"
                       name="username"
                       error={
@@ -231,14 +259,11 @@ const Auth = () => {
                       </Typography>
                     ) : null}
                     <FormControl variant="outlined">
-                      <InputLabel htmlFor="outlined-adornment-password">
-                        Password
-                      </InputLabel>
+                      <InputLabel>Password</InputLabel>
                       <OutlinedInput
                         required
                         onChange={handleInput}
                         fullWidth
-                        id="outlined-basic"
                         label="Password"
                         error={
                           errors.password || error.password || error.general
@@ -307,7 +332,6 @@ const Auth = () => {
                           ? true
                           : false
                       }
-                      id="outlined-basic"
                       inputRef={register({
                         required: true,
                         validate: () =>
@@ -353,7 +377,6 @@ const Auth = () => {
                       onChange={handleInput}
                       fullWidth
                       margin="normal"
-                      id="outlined-basic"
                       label="Username or Email"
                       name="name"
                       variant="outlined"
@@ -385,12 +408,7 @@ const Auth = () => {
                       </Typography>
                     ) : null}
                     <FormControl variant="outlined">
-                      <InputLabel
-                        required={true}
-                        htmlFor="outlined-adornment-password"
-                      >
-                        Password
-                      </InputLabel>
+                      <InputLabel required={true}>Password</InputLabel>
                       <OutlinedInput
                         onChange={handleInput}
                         fullWidth
@@ -435,7 +453,7 @@ const Auth = () => {
                   </>
                 )}
                 <Button
-                  disabled={loading}
+                  disabled={loading || signuploading}
                   type="submit"
                   variant="contained"
                   color="primary"
@@ -443,7 +461,7 @@ const Auth = () => {
                 >
                   {isSignup ? "Signup" : "Login"}
                 </Button>
-                {loading && (
+                {(loading || signuploading) && (
                   <CircularProgress
                     style={{
                       position: "relative",
@@ -476,6 +494,26 @@ const Auth = () => {
     </main>
   );
 };
+
+const SIGNUP = gql`
+  mutation signin(
+    $email: String!
+    $username: String!
+    $password: String!
+    $confirmPassword: String!
+  ) {
+    signup(
+      email: $email
+      password: $password
+      confirmPassword: $confirmPassword
+      username: $username
+    ) {
+      token
+      id
+      username
+    }
+  }
+`;
 
 const SIGNIN = gql`
   query signin($name: String!, $password: String!) {

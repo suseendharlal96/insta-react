@@ -1,4 +1,4 @@
-const { UserInputError, AuthenticationError } = require("apollo-server");
+const { UserInputError } = require("apollo-server");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
@@ -112,11 +112,19 @@ module.exports = {
       try {
         const emailExist = await User.findOne({ email });
         if (emailExist) {
-          throw new AuthenticationError("email exists");
+          throw new UserInputError("email exists", {
+            errors: {
+              email: "Email exists",
+            },
+          });
         }
         const usernameExist = await User.findOne({ username });
         if (usernameExist) {
-          throw new AuthenticationError("Username exists");
+          throw new UserInputError("Username exists", {
+            errors: {
+              username: "Username exists",
+            },
+          });
         }
 
         const hashPass = await bcrypt.hash(password, 10);

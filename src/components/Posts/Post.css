@@ -6,7 +6,10 @@
 .post-text {
   font-weight: normal;
 }
-
+.post {
+  max-width: 500px;
+  border:1px solid grey
+}
 .post-header {
   display: flex;
   align-items: center;
