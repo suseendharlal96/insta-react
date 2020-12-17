@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useLazyQuery, useMutation, gql } from "@apollo/client";
+import Recaptcha from "react-recaptcha";
 import {
   Card,
   CardMedia,
@@ -49,6 +50,7 @@ const Auth = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [isChanged, setChanged] = useState(false);
   const [isShowPass, setShowPass] = useState(false);
+  const [isVerified, setVerified] = useState(false);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -100,18 +102,22 @@ const Auth = () => {
 
   const formSubmit = () => {
     // e.preventDefault();
-    setError({
-      email: "",
-      password: "",
-      username: "",
-      confirmPassword: "",
-      name: "",
-      general: "",
-    });
-    if (!isSignup) {
-      login({ variables: form });
-    } else {
-      signup({ variables: form });
+    if (isVerified) {
+      setError({
+        email: "",
+        password: "",
+        username: "",
+        confirmPassword: "",
+        name: "",
+        general: "",
+      });
+      if (!isSignup) {
+        login({ variables: form });
+      } else {
+        signup({ variables: form });
+      }
+    }else{
+      alert('Please verify captcha')
     }
   };
 
@@ -130,6 +136,15 @@ const Auth = () => {
     });
     setIsSignup((prevState) => !prevState);
     clearErrors();
+  };
+
+  const callback = () => {
+    alert("sdf");
+  };
+  const verifyCallback = (response) => {
+    if (response) {
+      setVerified(true);
+    }
   };
 
   return (
@@ -452,6 +467,12 @@ const Auth = () => {
                     </FormControl>
                   </>
                 )}
+                <Recaptcha
+                  sitekey="6LcPNgoaAAAAAEFWyM6lEzfGdD4IATuAsT8j3h5C"
+                  render="onload"
+                  verifyCallback={verifyCallback}
+                  onloadCallback={callback}
+                />
                 <Button
                   disabled={loading || signuploading}
                   type="submit"
