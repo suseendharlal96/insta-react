@@ -95,7 +95,7 @@ module.exports = {
         const token = jwt.sign(
           {
             name,
-            password,
+            id: user._id,
           },
           "secretkey",
           { expiresIn: "1h" }
@@ -128,19 +128,20 @@ module.exports = {
         }
 
         const hashPass = await bcrypt.hash(password, 10);
-        const token = jwt.sign(
-          {
-            username,
-            password,
-          },
-          "secretkey",
-          { expiresIn: "1h" }
-        );
+
         const newUser = await User.create({
           username,
           email,
           password: hashPass,
         });
+        const token = jwt.sign(
+          {
+            username,
+            id: newUser._id,
+          },
+          "secretkey",
+          { expiresIn: "1h" }
+        );
         return { id: newUser._id, username, token };
       } catch (err) {
         throw err;

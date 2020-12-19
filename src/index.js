@@ -8,9 +8,11 @@ import "./index.css";
 import ApolloProvider from "./ApolloProvider";
 import reportWebVitals from "./reportWebVitals";
 import authReducer from "./store/reducers/auth";
+import postReducer from "./store/reducers/post";
 
 const rootReducer = combineReducers({
   authReducer,
+  postReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(thunk));

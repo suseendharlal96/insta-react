@@ -116,8 +116,8 @@ const Auth = () => {
       } else {
         signup({ variables: form });
       }
-    }else{
-      alert('Please verify captcha')
+    } else {
+      alert("Please verify captcha");
     }
   };
 
@@ -144,6 +144,27 @@ const Auth = () => {
   const verifyCallback = (response) => {
     if (response) {
       setVerified(true);
+      // const data = {
+      //   response,
+      //   secret: "6LcPNgoaAAAAANM0BBBCsRvRYB8cxrTgckb9_wmT",
+      // };
+      // fetch("https://www.google.com/recaptcha/api/siteverify", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "Access-Control-Allow-Origin": "http://localhost:3000/auth",
+      //   },
+      //   mode: "cors",
+      //   body: JSON.stringify(data),
+      // })
+      //   .then((res) => console.log(res.json()))
+      //   .then((data) => {
+
+      //     console.log(data);
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error:", error);
+      //   });
     }
   };
 
@@ -430,7 +451,7 @@ const Auth = () => {
                         autoComplete="off"
                         label="Password"
                         name="password"
-                        inputRef={register({ required: true, minLength: 6 })}
+                        inputRef={register({ required: true })}
                         type={isShowPass ? "text" : "password"}
                         variant="outlined"
                         endAdornment={
@@ -461,7 +482,7 @@ const Auth = () => {
                           align="center"
                           color="secondary"
                         >
-                          Required and must be atleast 6 characters
+                          Required
                         </Typography>
                       ) : null}
                     </FormControl>
@@ -469,7 +490,7 @@ const Auth = () => {
                 )}
                 <Recaptcha
                   sitekey="6LcPNgoaAAAAAEFWyM6lEzfGdD4IATuAsT8j3h5C"
-                  render="onload"
+                  render="explicit"
                   verifyCallback={verifyCallback}
                   onloadCallback={callback}
                 />

@@ -7,6 +7,20 @@ const typeDefs = gql`
     token: String!
   }
 
+  type Comment {
+    user: String
+    comment: String
+  }
+
+  type Post {
+    id: ID!
+    image: String!
+    userId: String!
+    title: String!
+    likes: [String]
+    comments: [Comment]
+  }
+
   type Query {
     signin(name: String!, password: String!): User
   }
@@ -18,6 +32,9 @@ const typeDefs = gql`
       confirmPassword: String!
       username: String!
     ): User
+
+    # createPost: String
+    createPost(image: String!, title: String!): Post!
   }
 `;
 

@@ -4,3 +4,9 @@ export const authSuccess = (data) => (dispatch) => {
     authData: data,
   });
 };
+
+export const logout = () => (dispatch) => {
+  dispatch({
+    type: "LOGOUT",
+  });
+};

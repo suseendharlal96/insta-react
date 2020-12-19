@@ -1,6 +1,6 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
-import { connect } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
+import { connect, useDispatch } from "react-redux";
 import {
   AppBar,
   Toolbar,
@@ -9,9 +9,13 @@ import {
   makeStyles,
 } from "@material-ui/core";
 
+import { logout } from "../../store/actions/auth";
+
 const Navbar = ({ authData }) => {
-  console.log(authData)
+  console.log(authData);
+  const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
   const useStyles = makeStyles((theme) => ({
     root: {
       flexGrow: 1,
@@ -31,19 +35,21 @@ const Navbar = ({ authData }) => {
             <Button
               color="secondary"
               variant="contained"
-              onClick={() => history.push("/auth")}
+              onClick={() => dispatch(logout())}
             >
               Logout
             </Button>
           </>
         ) : (
-          <Button
-            color="secondary"
-            variant="contained"
-            onClick={() => history.push("/auth")}
-          >
-            Login
-          </Button>
+          location.pathname !== "/auth" && (
+            <Button
+              color="secondary"
+              variant="contained"
+              onClick={() => history.push("/auth")}
+            >
+              Login
+            </Button>
+          )
         )}
       </Toolbar>
     </AppBar>
