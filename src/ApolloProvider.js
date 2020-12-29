@@ -5,10 +5,15 @@ import {
   createHttpLink,
 } from "@apollo/client";
 import { setContext } from "apollo-link-context";
+import { createUploadLink } from "apollo-upload-client";
 
 import App from "./App";
 
 const httpLink = createHttpLink({
+  uri: "http://localhost:5000/graphql",
+});
+
+const uploadLink = createUploadLink({
   uri: "http://localhost:5000/graphql",
 });
 
@@ -21,7 +26,7 @@ const authLink = setContext(() => {
 });
 
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: authLink.concat(uploadLink).concat(httpLink),
   cache: new InMemoryCache(),
 });
 

@@ -139,7 +139,7 @@ const Auth = () => {
   };
 
   const callback = () => {
-    alert("sdf");
+    console.log("captcha init");
   };
   const verifyCallback = (response) => {
     if (response) {

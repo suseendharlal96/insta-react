@@ -14,8 +14,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { postSuccess } from "../../store/actions/post";
 
 const PostForm = ({ open, handleClose, postSuccess }) => {
-  const [form, setForm] = useState({ title: "", image: "" });
-  const [error, setError] = useState({ title: "", image: "" });
+  const [form, setForm] = useState({ title: "", file: null });
+  const [error, setError] = useState({ title: "", file: "" });
   const { register, handleSubmit, clearErrors, errors } = useForm();
   const [formSubmit, { loading }] = useMutation(CREATE_POST, {
     onCompleted(data) {
@@ -24,13 +24,20 @@ const PostForm = ({ open, handleClose, postSuccess }) => {
       close();
     },
     onError(err) {
-      setError(err.graphQLErrors[0].extensions.errors);
+      console.log(err)
+      // setError(err.graphQLErrors[0].extensions.errors);
     },
   });
+  const handleFile = (e) => {
+    setForm({ ...form, file: e.target.files[0] });
+  };
+  const submitForm = () => {
+    formSubmit({ variables: { file: form.file, title: form.title } });
+  };
   const close = () => {
     clearErrors();
     handleClose();
-    setForm({ ...error, title: "", image: "" });
+    setForm({ ...error, title: "", file: "" });
     setError({ ...error, title: "", image: "" });
   };
   return (
@@ -40,10 +47,7 @@ const PostForm = ({ open, handleClose, postSuccess }) => {
       onClose={handleClose}
       aria-labelledby="responsive-dialog-title"
     >
-      <form
-        onSubmit={handleSubmit(() => formSubmit({ variables: form }))}
-        noValidate
-      >
+      <form onSubmit={handleSubmit(submitForm)} noValidate>
         <DialogTitle id="responsive-dialog-title">New Post</DialogTitle>
         <DialogContent>
           <TextField
@@ -72,20 +76,10 @@ const PostForm = ({ open, handleClose, postSuccess }) => {
           <Typography color={error && error.image ? "secondary" : "initial"}>
             Snapshot *
           </Typography>
-          {form?.image && (
-            <img
-              src={form?.image}
-              alt="post-image"
-              style={{ width: "100px", height: "100px" }}
-            />
-          )}
-          <FileUpload
-            multiple={false}
-            onDone={({ base64 }) => setForm({ ...form, image: base64 })}
-          />
-          {error && error.image && (
+          <input type="file" onChange={handleFile} />
+          {error && error.file && (
             <Typography variant="body1" color="secondary" align="center">
-              {error.image}
+              {error.file}
             </Typography>
           )}
         </DialogContent>
@@ -112,17 +106,9 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const CREATE_POST = gql`
-  mutation createPost($title: String!, $image: String!) {
-    createPost(title: $title, image: $image) {
-      id
-      image
-      userId
-      title
-      likes
-      comments {
-        user
-        comment
-      }
+  mutation createPost($file: Upload!, $title: String!) {
+    createPost(file: $file, title: $title) {
+      _id
     }
   }
 `;

@@ -13,10 +13,10 @@ const typeDefs = gql`
   }
 
   type Post {
-    id: ID!
-    image: String!
-    userId: String!
-    title: String!
+    _id: ID
+    image: String
+    userId: String
+    title: String
     likes: [String]
     comments: [Comment]
   }
@@ -34,7 +34,7 @@ const typeDefs = gql`
     ): User
 
     # createPost: String
-    createPost(image: String!, title: String!): Post!
+    createPost(file: Upload!, title: String!): Post
   }
 `;
 
