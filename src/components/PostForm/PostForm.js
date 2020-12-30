@@ -16,7 +16,7 @@ import { postSuccess } from "../../store/actions/post";
 const PostForm = ({ open, handleClose, postSuccess }) => {
   const [form, setForm] = useState({ title: "", file: null });
   const [error, setError] = useState({ title: "", file: "" });
-  const { register, handleSubmit, clearErrors, errors } = useForm();
+  const { register, handleSubmit, clearErrors, errors, getValues } = useForm();
   const [formSubmit, { loading }] = useMutation(CREATE_POST, {
     onCompleted(data) {
       console.log(data);
@@ -24,8 +24,8 @@ const PostForm = ({ open, handleClose, postSuccess }) => {
       close();
     },
     onError(err) {
-      console.log(err)
-      // setError(err.graphQLErrors[0].extensions.errors);
+      console.log(err);
+      setError(err.graphQLErrors[0].extensions.errors);
     },
   });
   const handleFile = (e) => {
@@ -60,12 +60,21 @@ const PostForm = ({ open, handleClose, postSuccess }) => {
             error={
               (errors && errors.title) || (error && error.title) ? true : false
             }
-            inputRef={register({ required: true })}
+            inputRef={register({
+              required: true,
+              isEmpty: () => getValues("title").replace(" ", "").length === 0,
+            })}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
           />
-          {errors && errors.title && (
+          {getValues("title")}
+          {errors && errors.title?.type === "required" && (
             <Typography variant="body1" color="secondary" align="center">
               Required
+            </Typography>
+          )}
+          {errors && errors.title?.type === "isEmpty" && (
+            <Typography variant="body1" color="secondary" align="center">
+              Must not be empty
             </Typography>
           )}
           {error && error.title && (
@@ -73,10 +82,26 @@ const PostForm = ({ open, handleClose, postSuccess }) => {
               {error.title}
             </Typography>
           )}
-          <Typography color={error && error.image ? "secondary" : "initial"}>
+          <Typography
+            color={
+              (errors && errors.image) || (error && error.image)
+                ? "secondary"
+                : "initial"
+            }
+          >
             Snapshot *
           </Typography>
-          <input type="file" onChange={handleFile} />
+          <input
+            type="file"
+            name="image"
+            ref={register({ required: true })}
+            onChange={handleFile}
+          />
+          {errors && errors.image && (
+            <Typography variant="body1" color="secondary" align="center">
+              Please upload an image
+            </Typography>
+          )}
           {error && error.file && (
             <Typography variant="body1" color="secondary" align="center">
               {error.file}
@@ -89,7 +114,7 @@ const PostForm = ({ open, handleClose, postSuccess }) => {
           </Button>
           <Button
             variant="contained"
-            disabled={loading}
+            disabled={loading || Object.keys(errors).length !== 0}
             color="primary"
             type="submit"
           >
@@ -109,6 +134,8 @@ const CREATE_POST = gql`
   mutation createPost($file: Upload!, $title: String!) {
     createPost(file: $file, title: $title) {
       _id
+      title
+      image
     }
   }
 `;

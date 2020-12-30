@@ -18,6 +18,10 @@ const postSchema = new Schema(
       type: [{ user: String, comment: String }],
       default: [],
     },
+    userprofile: {
+      type: String,
+      required: [true, "User profile required"],
+    },
     title: {
       type: String,
       required: [true, "title required"],

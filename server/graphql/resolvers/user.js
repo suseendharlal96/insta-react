@@ -1,11 +1,14 @@
 const { UserInputError } = require("apollo-server");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const AWS = require("aws-sdk");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const User = require("../../models/User");
 
 const validate = {
-  signup: (email, password, confirmPassword, username) => {
+  signup: (email, password, confirmPassword, username, profile) => {
     if (email.trim() === "") {
       throw new UserInputError("Email required", {
         errors: {
@@ -46,6 +49,13 @@ const validate = {
       throw new UserInputError("username required", {
         errors: {
           username: "Required",
+        },
+      });
+    }
+    if (!profile) {
+      throw new UserInputError("profile required", {
+        errors: {
+          profile: "Required",
         },
       });
     }
@@ -100,15 +110,23 @@ module.exports = {
           "secretkey",
           { expiresIn: "1h" }
         );
-        return { id: user._id, username: user.username, token };
+        return {
+          id: user._id,
+          username: user.username,
+          token,
+          profile: user.profile,
+        };
       } catch (err) {
         throw err;
       }
     },
   },
   Mutation: {
-    signup: async (_, { email, password, confirmPassword, username }) => {
-      validate.signup(email, password, confirmPassword, username);
+    signup: async (
+      _,
+      { email, password, confirmPassword, username, profile }
+    ) => {
+      validate.signup(email, password, confirmPassword, username, profile);
       try {
         const emailExist = await User.findOne({ email });
         if (emailExist) {
@@ -129,20 +147,48 @@ module.exports = {
 
         const hashPass = await bcrypt.hash(password, 10);
 
-        const newUser = await User.create({
-          username,
-          email,
-          password: hashPass,
-        });
-        const token = jwt.sign(
-          {
-            username,
-            id: newUser._id,
+        const { filename, createReadStream, mimetype } = await profile;
+        const stream = createReadStream();
+        const S3_FILE_URL = process.env.FILE_URL;
+        const s3Bucket = new AWS.S3({
+          credentials: {
+            accessKeyId: process.env.ACCESS_KEY,
+            secretAccessKey: process.env.SECRET_KEY,
           },
-          "secretkey",
-          { expiresIn: "1h" }
-        );
-        return { id: newUser._id, username, token };
+          region: process.env.REGION,
+        });
+        const params = {
+          Bucket: process.env.BUCKET_NAME,
+          Key: filename,
+          Body: stream,
+          ContentType: mimetype,
+          ACL: "public-read",
+        };
+        const data = s3Bucket.upload(params, (err, data) => {
+          if (err) {
+            console.log(err);
+          } else {
+            return data;
+          }
+        });
+
+        if (data) {
+          const newUser = await User.create({
+            username,
+            email,
+            password: hashPass,
+            profile: S3_FILE_URL + filename,
+          });
+          const token = jwt.sign(
+            {
+              username,
+              id: newUser._id,
+            },
+            "secretkey",
+            { expiresIn: "1h" }
+          );
+          return { id: newUser._id, username, token, profile: newUser.profile };
+        }
       } catch (err) {
         throw err;
       }

@@ -5,6 +5,7 @@ const typeDefs = gql`
     id: ID!
     username: String!
     token: String!
+    profile: String!
   }
 
   type Comment {
@@ -18,11 +19,13 @@ const typeDefs = gql`
     userId: String
     title: String
     likes: [String]
+    userprofile: String
     comments: [Comment]
   }
 
   type Query {
     signin(name: String!, password: String!): User
+    getPosts: [Post]!
   }
 
   type Mutation {
@@ -31,6 +34,7 @@ const typeDefs = gql`
       password: String!
       confirmPassword: String!
       username: String!
+      profile: Upload!
     ): User
 
     # createPost: String

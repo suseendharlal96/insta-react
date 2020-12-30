@@ -14,6 +14,10 @@ const userSchema = new Schema(
       type: String,
       required: [true, "password Required"],
     },
+    profile: {
+      type: String,
+      required: [true, "profile required"],
+    },
   },
   { timestamps: true }
 );

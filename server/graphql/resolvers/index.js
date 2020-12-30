@@ -4,6 +4,7 @@ const postResolver = require("./post");
 const resolvers = {
   Query: {
     ...userResolver.Query,
+    ...postResolver.Query,
   },
   Mutation: {
     ...userResolver.Mutation,

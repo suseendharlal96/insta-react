@@ -1,44 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { gql, useQuery } from "@apollo/client";
 import { Avatar, TextField, Button } from "@material-ui/core";
-import FileUpload from "react-file-base64";
 
 import "./Post.css";
+import { getPostSuccess } from "../../store/actions/post";
 
 const Post = () => {
-  const [form, setForm] = useState({
-    title: "",
-    image: "",
+  const dispatch = useDispatch();
+  const { data, loading } = useQuery(GET_POSTS, {
+    onCompleted(data) {
+      console.log(data.getPosts);
+      dispatch(getPostSuccess(data.getPosts));
+    },
+    onError(err) {
+      console.log(err);
+    },
   });
-  const submit = (e) => {
-    e.preventDefault();
-    console.log(form);
-  };
-  return (
-    //
-    <div className="post">
-      <header className="post-header">
-        <Avatar className="post-avatar" alt="Susee" src="/static/images" />
-        <h3>Username</h3>
-      </header>
-      {/* <img className="post-image" src="/react.png" alt="logo" /> */}
-      <form onSubmit={submit}>
-        <TextField
-          variant="outlined"
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-        />
-        <FileUpload
-          multiple={false}
-          onDone={({ base64 }) => setForm({ ...form, image: base64 })}
-        />
-        <Button type="submit" variant="contained" color="primary">
-          Submit
-        </Button>
-      </form>
-      <h4 className="post-text">
-        <strong>Susee</strong>Nice post
-      </h4>
-    </div>
+  const posts = useSelector((state) => state.postReducer.posts);
+  console.log(posts);
+  return loading ? (
+    <p>Loading..</p>
+  ) : posts.length > 0 ? (
+    posts.map((post) => (
+      <div className="post">
+        <header className="post-header">
+          <Avatar
+            className="post-avatar"
+            alt={post.title}
+            src={post.userprofile}
+          />
+          <h3>{post.title}</h3>
+        </header>
+        <img className="post-image" src={post.image} alt="logo" />
+        <h4 className="post-text">
+          <strong>Susee</strong>Nice post
+        </h4>
+      </div>
+    ))
+  ) : (
+    <p>No data.</p>
   );
 };
+
+const GET_POSTS = gql`
+  query getPosts {
+    getPosts {
+      _id
+      title
+      image
+      userprofile
+    }
+  }
+`;
 
 export default Post;

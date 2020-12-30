@@ -57,6 +57,7 @@ const Auth = () => {
     username: "",
     confirmPassword: "",
     name: "",
+    profile: null,
   });
   const [error, setError] = useState({
     email: "",
@@ -64,6 +65,7 @@ const Auth = () => {
     username: "",
     confirmPassword: "",
     name: "",
+    profile: "",
     general: "",
   });
 
@@ -95,7 +97,7 @@ const Auth = () => {
       history.push("/");
     },
     onError(err) {
-      console.log(err.graphQLErrors[0]);
+      console.log(err);
       setError(err.graphQLErrors[0].extensions.errors);
     },
   });
@@ -405,6 +407,32 @@ const Auth = () => {
                         Passwords do not match
                       </Typography>
                     ) : null}
+                    <Typography
+                      color={
+                        (errors && errors.profile) || (error && error.profile)
+                          ? "secondary"
+                          : "initial"
+                      }
+                    >
+                      Profile image *
+                    </Typography>
+                    <input
+                      type="file"
+                      name="profile"
+                      ref={register({ required: true })}
+                      onChange={(e) =>
+                        setForm({ ...form, profile: e.target.files[0] })
+                      }
+                    />
+                    {errors?.profile?.type === "required" ? (
+                      <Typography
+                        variant="caption"
+                        align="center"
+                        color="secondary"
+                      >
+                        Please upload a profile image
+                      </Typography>
+                    ) : null}
                   </>
                 ) : (
                   <>
@@ -419,7 +447,7 @@ const Auth = () => {
                       autoComplete="off"
                       inputRef={register({ required: true })}
                       error={
-                        errors.name || error.name || error.general
+                        (errors && errors.name) || error.name || error.general
                           ? true
                           : false
                       }
@@ -471,12 +499,14 @@ const Auth = () => {
                           </InputAdornment>
                         }
                         error={
-                          errors.password || error.password || error.general
+                          (errors && errors.password) ||
+                          error.password ||
+                          error.general
                             ? true
                             : false
                         }
                       />
-                      {errors.password ? (
+                      {errors && errors.password ? (
                         <Typography
                           variant="caption"
                           align="center"
@@ -495,7 +525,9 @@ const Auth = () => {
                   onloadCallback={callback}
                 />
                 <Button
-                  disabled={loading || signuploading}
+                  disabled={
+                    loading || signuploading || Object.keys(errors).length !== 0
+                  }
                   type="submit"
                   variant="contained"
                   color="primary"
@@ -543,16 +575,19 @@ const SIGNUP = gql`
     $username: String!
     $password: String!
     $confirmPassword: String!
+    $profile: Upload!
   ) {
     signup(
       email: $email
       password: $password
       confirmPassword: $confirmPassword
       username: $username
+      profile: $profile
     ) {
       token
       id
       username
+      profile
     }
   }
 `;
@@ -563,6 +598,7 @@ const SIGNIN = gql`
       token
       id
       username
+      profile
     }
   }
 `;

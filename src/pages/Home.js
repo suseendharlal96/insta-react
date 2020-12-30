@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 
 import PostForm from "../components/PostForm/PostForm";
+import Post from "../components/Posts/Post";
 
 const Home = ({ authData }) => {
   const useStyles = makeStyles(() => ({
@@ -64,6 +65,7 @@ const Home = ({ authData }) => {
           <div className={classes.grow} />
         </Toolbar>
       </AppBar>
+      <Post />
       <PostForm open={open} handleClose={handleClose} />
     </>
   );

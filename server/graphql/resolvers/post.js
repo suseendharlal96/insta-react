@@ -1,12 +1,18 @@
 const { AuthenticationError, UserInputError } = require("apollo-server");
 const AWS = require("aws-sdk");
-const dotenv = require('dotenv')
-dotenv.config()
+const dotenv = require("dotenv");
+dotenv.config();
 
+const User = require("../../models/User");
 const Post = require("../../models/Post");
 const auth = require("../../authMiddleware");
 
 module.exports = {
+  Query: {
+    getPosts: async () => {
+      return Post.find({});
+    },
+  },
   Mutation: {
     createPost: async (_, { title, file }, context) => {
       const req = auth(context);
@@ -53,10 +59,12 @@ module.exports = {
       });
       console.log(data);
       if (data) {
+        const user = await User.findOne({_id:req.userId})
         const newPost = await Post.create({
           image: s3FileUrl + filename,
           userId: req.userId,
           title,
+          userprofile: user.profile
         });
         console.log(newPost);
         return newPost;
