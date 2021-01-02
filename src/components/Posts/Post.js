@@ -90,13 +90,16 @@ const Post = () => {
                   />
                 </span>
               ) : (
-                <FavoriteBorderIcon
-                  className={classes.react}
-                  color="secondary"
-                  onClick={() =>
-                    likeunlike({ variables: { postId: post._id.toString() } })
-                  }
-                />
+                <span>
+                  {post.likes.length > 0 ? post.likes.length : null}
+                  <FavoriteBorderIcon
+                    className={classes.react}
+                    color="secondary"
+                    onClick={() =>
+                      likeunlike({ variables: { postId: post._id.toString() } })
+                    }
+                  />
+                </span>
               )}
               <ChatIcon className={classes.react} color="primary" />
             </>
