@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -42,16 +42,16 @@ const Home = ({ authData }) => {
   return (
     <>
       <AppBar position="fixed" color="primary" className={classes.appBar}>
-        <Toolbar>
+        <Toolbar style={{}}>
           {!authData ? (
-            <Button
+            <Fab
               className={classes.fabButton}
-              onClick={() => history.push("/auth")}
+              component={Link}
+              to="/auth"
               color="secondary"
-              variant="contained"
             >
-              Login to post
-            </Button>
+              <AddIcon />
+            </Fab>
           ) : (
             <Fab
               onClick={handleClickOpen}
@@ -65,7 +65,19 @@ const Home = ({ authData }) => {
           <div className={classes.grow} />
         </Toolbar>
       </AppBar>
-      <Post />
+      <div
+        style={{
+          padding: "0px 20px",
+          height: "450px",
+          overflow:'auto',
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Post />
+      </div>
       <PostForm open={open} handleClose={handleClose} />
     </>
   );

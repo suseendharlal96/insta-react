@@ -12,3 +12,10 @@ export const getPostSuccess = (data) => (dispatch) => {
     posts: data,
   });
 };
+
+export const likePostSuccess = (data) => (dispatch) => {
+  dispatch({
+    type: "LIKE_SUCCESS",
+    post: data,
+  });
+};

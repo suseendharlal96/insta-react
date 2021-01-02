@@ -37,8 +37,9 @@ const typeDefs = gql`
       profile: Upload!
     ): User
 
-    # createPost: String
     createPost(file: Upload!, title: String!): Post
+
+    likeUnlikePost(postId: String!): Post
   }
 `;
 

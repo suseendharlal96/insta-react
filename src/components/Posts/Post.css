@@ -8,7 +8,8 @@
 }
 .post {
   max-width: 500px;
-  border:1px solid grey
+  border: 1px solid grey;
+  margin-bottom: 15px;
 }
 .post-header {
   display: flex;
@@ -18,4 +19,13 @@
 
 .post-avatar {
   margin-right: 10px;
+  border:1px solid grey
+}
+
+.btn-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 2% 5%;
+  border-top: 1px solid grey;
 }

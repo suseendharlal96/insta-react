@@ -59,16 +59,37 @@ module.exports = {
       });
       console.log(data);
       if (data) {
-        const user = await User.findOne({_id:req.userId})
+        const user = await User.findOne({ _id: req.userId });
         const newPost = await Post.create({
           image: s3FileUrl + filename,
           userId: req.userId,
           title,
-          userprofile: user.profile
+          userprofile: user.profile,
         });
         console.log(newPost);
         return newPost;
       }
+    },
+    likeUnlikePost: async (_, { postId }, context) => {
+      const req = auth(context);
+      if (!req.userId) {
+        throw new AuthenticationError("Unauthenticated");
+      }
+      const post = await Post.findOne({ _id: postId });
+      if (post.likes.length > 0) {
+        const index = post.likes.findIndex((like) => like === req.userId);
+        if (index !== -1) {
+          const likes = post.likes.filter((post) => post !== req.userId);
+          post.likes = likes;
+        } else {
+          post.likes.push(req.userId);
+        }
+      } else {
+        post.likes.push(req.userId);
+      }
+      await post.save();
+      console.log(post);
+      return post;
     },
   },
 };

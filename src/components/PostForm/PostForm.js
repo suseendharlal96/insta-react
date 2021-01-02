@@ -136,6 +136,7 @@ const CREATE_POST = gql`
       _id
       title
       image
+      likes
     }
   }
 `;
