@@ -19,3 +19,10 @@ export const likePostSuccess = (data) => (dispatch) => {
     post: data,
   });
 };
+
+export const commentSuccess = (data) => (dispatch) => {
+  dispatch({
+    type: "COMMENT_SUCCESS",
+    post: data,
+  });
+};

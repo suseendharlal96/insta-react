@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { gql, useMutation } from "@apollo/client";
-import FileUpload from "react-file-base64";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -44,7 +43,7 @@ const PostForm = ({ open, handleClose, postSuccess }) => {
     <Dialog
       fullWidth={true}
       open={open}
-      onClose={handleClose}
+      onClose={close}
       aria-labelledby="responsive-dialog-title"
     >
       <form onSubmit={handleSubmit(submitForm)} noValidate>
@@ -109,7 +108,7 @@ const PostForm = ({ open, handleClose, postSuccess }) => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button disabled={loading} autoFocus onClick={close} color="primary">
+          <Button disabled={loading} onClick={close} color="primary">
             Cancel
           </Button>
           <Button
@@ -137,6 +136,11 @@ const CREATE_POST = gql`
       title
       image
       likes
+      comments {
+        user
+        comment
+        date
+      }
     }
   }
 `;

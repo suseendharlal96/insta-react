@@ -11,6 +11,7 @@ const typeDefs = gql`
   type Comment {
     user: String
     comment: String
+    date: String
   }
 
   type Post {
@@ -21,6 +22,7 @@ const typeDefs = gql`
     likes: [String]
     userprofile: String
     comments: [Comment]
+    createdAt: String
   }
 
   type Query {
@@ -40,6 +42,8 @@ const typeDefs = gql`
     createPost(file: Upload!, title: String!): Post
 
     likeUnlikePost(postId: String!): Post
+
+    commentPost(postId: String!, comment: String!): Post
   }
 `;
 

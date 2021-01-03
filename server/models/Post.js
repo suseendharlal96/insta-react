@@ -15,7 +15,7 @@ const postSchema = new Schema(
       default: [],
     },
     comments: {
-      type: [{ user: String, comment: String }],
+      type: [{ user: String, comment: String, date: String }],
       default: [],
     },
     userprofile: {

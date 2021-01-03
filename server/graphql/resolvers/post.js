@@ -10,7 +10,9 @@ const auth = require("../../authMiddleware");
 module.exports = {
   Query: {
     getPosts: async () => {
-      return Post.find({});
+      const posts = Post.find({});
+      console.log(posts);
+      return posts;
     },
   },
   Mutation: {
@@ -89,6 +91,21 @@ module.exports = {
       }
       await post.save();
       console.log(post);
+      return post;
+    },
+    commentPost: async (_, { comment, postId }, context) => {
+      const req = auth(context);
+      if (!req.userId) {
+        throw new AuthenticationError("Unauthenticated");
+      }
+      const post = await Post.findOne({ _id: postId });
+      const user = await User.findOne({ _id: req.userId });
+      post.comments.push({
+        user: user.username,
+        comment,
+        date: new Date().toISOString(),
+      });
+      await post.save();
       return post;
     },
   },

@@ -29,6 +29,19 @@ const postReducer = (state = initState, action) => {
         posts: postsCopy,
       };
 
+    case "COMMENT_SUCCESS":
+      const commentsCopy = [...state.posts];
+      const postIndex = commentsCopy.findIndex(
+        (post) => post._id === action.post._id
+      );
+      if (postIndex !== -1) {
+        commentsCopy[postIndex] = action.post;
+      }
+      return {
+        ...state,
+        posts: commentsCopy,
+      };
+
     default:
       return state;
   }
