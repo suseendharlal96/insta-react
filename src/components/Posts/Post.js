@@ -13,7 +13,6 @@ const Post = () => {
   const dispatch = useDispatch();
 
   const posts = useSelector((state) => state.postReducer.posts);
-  console.log(posts);
 
   useEffect(() => {
     refetch();
@@ -21,7 +20,6 @@ const Post = () => {
 
   const { loading, refetch } = useQuery(GET_POSTS, {
     onCompleted(data) {
-      console.log(data.getPosts);
       dispatch(getPostSuccess(data.getPosts));
     },
     onError(err) {

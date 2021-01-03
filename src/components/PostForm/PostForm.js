@@ -18,7 +18,6 @@ const PostForm = ({ open, handleClose, postSuccess }) => {
   const { register, handleSubmit, clearErrors, errors, getValues } = useForm();
   const [formSubmit, { loading }] = useMutation(CREATE_POST, {
     onCompleted(data) {
-      console.log(data);
       postSuccess(data.createPost);
       close();
     },
@@ -65,7 +64,6 @@ const PostForm = ({ open, handleClose, postSuccess }) => {
             })}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
           />
-          {getValues("title")}
           {errors && errors.title?.type === "required" && (
             <Typography variant="body1" color="secondary" align="center">
               Required

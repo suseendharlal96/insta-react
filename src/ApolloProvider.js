@@ -10,11 +10,11 @@ import { createUploadLink } from "apollo-upload-client";
 import App from "./App";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:5000/graphql",
+  uri: "https://instacard-react.herokuapp.com/graphql",
 });
 
 const uploadLink = createUploadLink({
-  uri: "http://localhost:5000/graphql",
+  uri: "https://instacard-react.herokuapp.com/graphql",
 });
 
 const authLink = setContext(() => {

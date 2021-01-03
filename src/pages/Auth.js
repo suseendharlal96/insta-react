@@ -81,7 +81,6 @@ const Auth = () => {
 
   const [login, { loading }] = useLazyQuery(SIGNIN, {
     onCompleted(data) {
-      console.log(data);
       dispatch(authSuccess(data.signin));
       history.push("/");
     },
@@ -92,7 +91,6 @@ const Auth = () => {
 
   const [signup, { signuploading }] = useMutation(SIGNUP, {
     onCompleted(data) {
-      console.log(data);
       dispatch(authSuccess(data.signup));
       history.push("/");
     },
@@ -141,7 +139,7 @@ const Auth = () => {
   };
 
   const callback = () => {
-    console.log("captcha init");
+    // console.log("captcha init");
   };
   const verifyCallback = (response) => {
     if (response) {

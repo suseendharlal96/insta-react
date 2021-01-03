@@ -35,7 +35,6 @@ const SinglePost = ({ post }) => {
   });
   const isLiked = (likes) => {
     if (likes.length > 0) {
-      console.log(likes);
       const a = likes.find((like) => like === authData.id);
       return a ? true : false;
     } else {

@@ -30,7 +30,6 @@ const CommentForm = ({ open, handleClose, comments, postId }) => {
 
   const [postComment, { loading }] = useMutation(COMMENT, {
     onCompleted(data) {
-      console.log(data);
       dispatch(commentSuccess(data.commentPost));
       setComment("");
       close();

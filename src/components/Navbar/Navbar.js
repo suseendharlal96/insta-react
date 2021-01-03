@@ -16,7 +16,6 @@ import {
 import { logout } from "../../store/actions/auth";
 
 const Navbar = ({ authData }) => {
-  console.log(authData);
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation();
